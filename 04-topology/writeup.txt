@@ -1,0 +1,17 @@
+NOTE: "[F]or simplicity, we use the link delays to regulate how frequently each router can transmit a message."
+
+Client-server Topology:
+
+The time I get for this is ~1005ms. This makes sense, since every link has a delay of 1000ms, and we're sending a packet from three different outer routers to the central router. They're sent concurrently, and consequently received fairly close to one another.
+
+Ring Topology:
+
+The time I get for this is ~809ms. This time also makes sense. The ring is effectively blocked at one link, which is very expensive to pass through (link between router 6 and router 7, which costs 5000ms). Therefore, packets need to avoid going through this link and instead traverse the rest of the ring, if need be, to get to their destination.
+
+The longest path we have here is from R6 to R7, for which we have to go all the way around the ring. Notice that the link cost of this path should be 700ms (and since packets are sent concurrently, shouldn't the time be closer to 700ms, not 800ms?). It just so happens router 3 receives the packet going from R6 to R7 and the packet going from R8 to R4 at the same time. Because of the way the simulation is built, it only forwards one packet at this time, waiting a certain delay. This accounts for the seemingly additional 100ms in the calculation. Again, packets are sent concurrently.
+
+Complex Network:
+
+The time I get for this is ~2400ms. The costliest path of the three given is R4 to R5. The smallest cost for this path is 2300ms. However, like in the ring, router 6 receives two packets at once, the one coming from R8 to R6, and the one going from R1 to R9. Our simulation adds to the time due to this.
+
+I used test.cpp to generate shortest costs given a source router. Got the code online for a Dijkstra's algorithm, and adapted the main function for our purposes. I cross-referenced the shortest distances with the graph to make sure my paths were right in the forwarding table. Run ./src/t if you'd like to see what it does.
